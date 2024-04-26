@@ -1,0 +1,3 @@
+// ignore all node modules
+Backend/node_modules
+frontend/node_modules
