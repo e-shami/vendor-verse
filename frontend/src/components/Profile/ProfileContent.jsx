@@ -717,6 +717,7 @@ const Address = () => {
                   <div className=" w-full pb-2">
                     <input
                       type="submit"
+                      value="Submit new Address"
                       className={`${styles.input} mt-5 cursor-pointer`}
                       required
                       readOnly

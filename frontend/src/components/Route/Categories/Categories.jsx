@@ -24,10 +24,7 @@ const Categories = () => {
         </div>
       </div>
 
-      <div
-        className={`${styles.section} bg-white p-6 rounded-lg mb-12`}
-        id="categories"
-      >
+      <div className={`${styles.section}  py-6 mb-12`} id="categories">
         <div className="grid grid-cols-1 gap-[5px] md:grid-cols-2 md:gap-[10px] lg:grid-cols-4 lg:gap-[20px] xl:grid-cols-5 xl:gap-[30px]">
           {categoriesData &&
             categoriesData.map((i) => {
@@ -36,14 +33,14 @@ const Categories = () => {
               };
               return (
                 <div
-                  className="w-full h-[100px] flex items-center justify-between cursor-pointer overflow-hidden"
+                  className="w-full h-[140px] bg-white p-8 rounded-lg flex items-center justify-between cursor-pointer overflow-hidden"
                   key={i.id}
                   onClick={() => handleSubmit(i)}
                 >
                   <h5 className={`text-[18px] leading-[1.3]`}>{i.title}</h5>
                   <img
                     src={i.image_Url}
-                    className="w-[120px] object-cover"
+                    className="w-[120px] object-cover rounded-lg"
                     alt=""
                   />
                 </div>

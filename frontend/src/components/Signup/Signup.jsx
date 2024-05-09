@@ -24,10 +24,13 @@ const Singup = () => {
     };
 
     reader.readAsDataURL(e.target.files[0]);
+    console.log(reader.result);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log(name, email, password, avatar);
 
     axios
       .post(`${server}/user/create-user`, { name, email, password, avatar })

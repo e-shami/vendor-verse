@@ -11,6 +11,7 @@ const Navbar = ({ active }) => {
           <div className="flex">
             <Link
               to={i.url}
+              key={index}
               className={`${
                 active === index + 1
                   ? "text-[#17dd1f]"

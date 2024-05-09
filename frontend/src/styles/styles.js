@@ -21,7 +21,7 @@ const styles = {
   carousolHeading:
     "text-[28px] 800px:text-[60px] font-[Poppins] font-[500] text-[#000000bd] absolute left-14 top-48 drop-shadow-lg",
   carousolSubHeading:
-    "text-[16px] 800px:text-[26px] font-[Poppins] font-[400] text-[#0000008b] absolute left-14 top-60 800px:top-80 800px:w-[50%] text-start bg-blend-difference",
+    "text-[16px] 800px:text-[28px] font-[Poppins] font-[500] text-[#0000009b] absolute left-14 top-60 800px:top-80 800px:w-[50%] text-start bg-blend-soft",
 };
 
 export default styles;
