@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
-import { categoriesData, productData } from "../../static/data";
+import { categoriesData } from "../../static/data";
 import {
+  AiOutlineCamera,
   AiOutlineHeart,
   AiOutlineSearch,
   AiOutlineShoppingCart,
@@ -17,7 +18,7 @@ import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 import { RxCross1 } from "react-icons/rx";
 import logo from "../../Assests/images/logo.svg";
-
+import { useNavigate } from "react-router-dom";
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { isSeller } = useSelector((state) => state.seller);
@@ -31,6 +32,9 @@ const Header = ({ activeHeading }) => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const fileInputRef = useRef();
+  const navigate = useNavigate();
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -52,6 +56,91 @@ const Header = ({ activeHeading }) => {
     }
   });
 
+  async function query(file) {
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      reader.onload = async () => {
+        try {
+          const response = await fetch(
+            "https://api-inference.huggingface.co/models/facebook/detr-resnet-101",
+            {
+              headers: {
+                Authorization: "Bearer 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",
+              },
+              method: "POST",
+              body: reader.result,
+            }
+          );
+          const result = await response.json();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        const result = await query(file);
+        let highestScoreIndex = (result) => {
+          let maxScore = 0;
+          let maxIndex = 0;
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].score > maxScore) {
+              maxScore = result[i].score;
+              maxIndex = i;
+            }
+          }
+          return maxIndex;
+        };
+
+        let maxIndex = highestScoreIndex(result);
+        let filteredProducts =
+          allProducts &&
+          allProducts.filter(
+            (product) =>
+              product.name
+                .toLowerCase()
+                .includes(result[maxIndex].label.toLowerCase()) ||
+              product.category
+                .toLowerCase()
+                .includes(result[maxIndex].label.toLowerCase())
+          );
+        setSearchTerm(result[maxIndex].label);
+        console.log("filteredProducts: ", filteredProducts);
+
+        navigate("/products", {
+          state:
+            filteredProducts && filteredProducts.length > 0
+              ? {
+                  searchResult: filteredProducts,
+                  message: "success",
+                  status: "success",
+                }
+              : {
+                  searchResult: [],
+                  message: `No products found for the searched image of ${searchTerm}`,
+                  status: "failed",
+                },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("No file selected");
+    }
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <>
       <div className={`${styles.section}`}>
@@ -67,37 +156,57 @@ const Header = ({ activeHeading }) => {
             </Link>
           </div>
           {/* search box */}
-          <div className="w-[50%] relative">
-            <input
-              type="text"
-              placeholder="Search Product..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
-            />
-            <AiOutlineSearch
-              size={30}
-              className="absolute right-2 top-1.5 cursor-pointer"
-            />
-            {searchData && searchData.length !== 0 ? (
-              <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                {searchData &&
-                  searchData.map((i, index) => {
-                    return (
-                      <Link to={`/product/${i._id}`}>
-                        <div className="w-full flex items-start-py-3">
-                          <img
-                            src={`${i.images[0]?.url}`}
-                            alt=""
-                            className="w-[40px] h-[40px] mr-[10px]"
-                          />
-                          <h1>{i.name}</h1>
-                        </div>
-                      </Link>
-                    );
-                  })}
+          <div className="w-[50%] relative flex">
+            <div className="w-[90%] relative flex">
+              <div className="w-[95%] relative">
+                <input
+                  type="text"
+                  placeholder="Search Product..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md "
+                />
+                <AiOutlineSearch
+                  size={30}
+                  className="absolute right-2 top-1.5 cursor-pointer"
+                />
+                {searchData && searchData.length !== 0 ? (
+                  <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4 w-full px-10">
+                    {searchData &&
+                      searchData.map((i, index) => {
+                        return (
+                          <Link key={index} to={`/product/${i._id}`}>
+                            <div className="w-full flex items-start-py-3">
+                              <img
+                                src={`${i.images[0]?.url}`}
+                                alt=""
+                                className="w-[40px] h-[40px] mr-[10px]"
+                              />
+                              <h1>{i.name}</h1>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                  </div>
+                ) : null}
+                {/* camera icon */}
               </div>
-            ) : null}
+            </div>
+            <div className="flex items-center justify-center">
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <button
+                onClick={handleButtonClick}
+                className="border-none bg-none"
+              >
+                <AiOutlineCamera className="text-2xl" size={30} />
+              </button>
+            </div>
           </div>
 
           <div className={`${styles.button}`}>
@@ -116,7 +225,7 @@ const Header = ({ activeHeading }) => {
         } transition hidden 800px:flex items-center justify-between w-full bg-[#005075] h-[70px]`}
       >
         <div
-          className={`${styles.section} relative ${styles.noramlFlex} justify-between`}
+          className={`${styles.section} relative ${styles.normalFlex} justify-between`}
         >
           {/* categories */}
           <div onClick={() => setDropDown(!dropDown)}>
@@ -141,12 +250,12 @@ const Header = ({ activeHeading }) => {
             </div>
           </div>
           {/* navitems */}
-          <div className={`${styles.noramlFlex}`}>
+          <div className={`${styles.normalFlex}`}>
             <Navbar active={activeHeading} />
           </div>
 
           <div className="flex">
-            <div className={`${styles.noramlFlex}`}>
+            <div className={`${styles.normalFlex}`}>
               <div
                 className="relative cursor-pointer mr-[15px]"
                 onClick={() => setOpenWishlist(true)}
@@ -158,7 +267,7 @@ const Header = ({ activeHeading }) => {
               </div>
             </div>
 
-            <div className={`${styles.noramlFlex}`}>
+            <div className={`${styles.normalFlex}`}>
               <div
                 className="relative cursor-pointer mr-[15px]"
                 onClick={() => setOpenCart(true)}
@@ -173,7 +282,7 @@ const Header = ({ activeHeading }) => {
               </div>
             </div>
 
-            <div className={`${styles.noramlFlex}`}>
+            <div className={`${styles.normalFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">
                 {isAuthenticated ? (
                   <Link to="/profile">

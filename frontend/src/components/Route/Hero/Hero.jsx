@@ -16,7 +16,7 @@ const Hero = () => {
       <Carousel
         interval={5000}
         transitionTime={1000}
-        // autoPlay
+        autoPlay
         infiniteLoop
         showIndicators={false}
         showStatus={false}
@@ -24,7 +24,7 @@ const Hero = () => {
         className="-translate-y-[7.5%] 800px:-translate-y-0"
       >
         <div
-          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full ${styles.noramlFlex}`}
+          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full ${styles.normalFlex}`}
         >
           <img
             src={require("../../../Assests/images/landingPage/home-decor.jpg")}
@@ -40,7 +40,7 @@ const Hero = () => {
           </p>
         </div>
         <div
-          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full ${styles.noramlFlex}`}
+          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full ${styles.normalFlex}`}
         >
           <img
             src={require("../../../Assests/images/landingPage/electronic-devices.jpg")}
@@ -56,7 +56,7 @@ const Hero = () => {
           </p>
         </div>
         <div
-          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full  ${styles.noramlFlex}`}
+          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full  ${styles.normalFlex}`}
         >
           <img
             src="https://d3c7odttnp7a2d.cloudfront.net/uploads/article/social_image/6-kitchen-products-our-test-team-can-t-live-without/Image_of_kitchen_appliances.png"
@@ -73,7 +73,7 @@ const Hero = () => {
         </div>
 
         <div
-          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full ${styles.noramlFlex}`}
+          className={`relative min-h-[70vh] 800px:min-h-[80vh] w-full ${styles.normalFlex}`}
         >
           <img
             src={require("../../../Assests/images/landingPage/clothing.jpg")}
@@ -93,7 +93,7 @@ const Hero = () => {
       {!isMobile && (
         <>
           <div
-            className={`${styles.noramlFlex} justify-center -translate-y-[7.5%] absolute bottom-8 `}
+            className={`${styles.normalFlex} justify-center -translate-y-[7.5%] absolute bottom-8 `}
           >
             <button
               onClick={onExploreMore}

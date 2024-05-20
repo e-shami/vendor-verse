@@ -16,7 +16,7 @@ const styles = {
   input: "w-full border p-1 rounded-[5px]",
   activeStatus:
     "w-[10px] h-[10px] rounded-full absolute top-0 right-1 bg-[#40d132]",
-  noramlFlex: "flex items-center",
+  normalFlex: "flex items-center",
 
   carousolHeading:
     "text-[28px] 800px:text-[60px] font-[Poppins] font-[500] text-[#000000bd] absolute left-14 top-48 drop-shadow-lg",

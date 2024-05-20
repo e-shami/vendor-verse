@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import Footer from "../components/Layout/Footer";
@@ -28,13 +29,7 @@ const ProductDetailsPage = () => {
     <div>
       <Header />
       <ProductDetails data={data} />
-        {
-          !eventData && (
-            <>
-            {data && <SuggestedProduct data={data} />}
-            </>
-          )
-        }
+      {!eventData && <>{data && <SuggestedProduct data={data} />}</>}
       <Footer />
     </div>
   );

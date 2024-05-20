@@ -4,7 +4,7 @@
   "description": "This is the backend for the vendor-verse multi-vendor market place. It is implemented using Nodejs and MongoDB. It also uses JWT, Bcrypt and other authentication services. For more information, please check package.json for dependencies list.",
   "main": "index.js",
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "nodemon index.js",

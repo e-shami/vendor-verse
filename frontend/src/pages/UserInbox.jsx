@@ -13,7 +13,7 @@ const ENDPOINT = "https://socket-ecommerce-tu68.onrender.com/";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const UserInbox = () => {
-  const { user,loading } = useSelector((state) => state.user);
+  const { user, loading } = useSelector((state) => state.user);
   const [conversations, setConversations] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentChat, setCurrentChat] = useState();
@@ -21,7 +21,7 @@ const UserInbox = () => {
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [images, setImages] = useState();
+  const [, setImages] = useState();
   const [activeStatus, setActiveStatus] = useState(false);
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
@@ -45,14 +45,14 @@ const UserInbox = () => {
   useEffect(() => {
     const getConversation = async () => {
       try {
-        const resonse = await axios.get(
+        const response = await axios.get(
           `${server}/conversation/get-all-conversation-user/${user?._id}`,
           {
             withCredentials: true,
           }
         );
 
-        setConversations(resonse.data.conversations);
+        setConversations(response.data.conversations);
       } catch (error) {
         // console.log(error);
       }
@@ -139,7 +139,7 @@ const UserInbox = () => {
         lastMessage: newMessage,
         lastMessageId: user._id,
       })
-      .then((res) => {
+      .then(() => {
         setNewMessage("");
       })
       .catch((error) => {
@@ -161,7 +161,6 @@ const UserInbox = () => {
   };
 
   const imageSendingHandler = async (e) => {
-
     const receiverId = currentChat.members.find(
       (member) => member !== user._id
     );
@@ -174,15 +173,12 @@ const UserInbox = () => {
 
     try {
       await axios
-        .post(
-          `${server}/message/create-new-message`,
-          {
-            images: e,
-            sender: user._id,
-            text: newMessage,
-            conversationId: currentChat._id,
-          }
-        )
+        .post(`${server}/message/create-new-message`, {
+          images: e,
+          sender: user._id,
+          text: newMessage,
+          conversationId: currentChat._id,
+        })
         .then((res) => {
           setImages();
           setMessages([...messages, res.data.message]);
@@ -204,7 +200,7 @@ const UserInbox = () => {
   };
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ beahaviour: "smooth" });
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
@@ -263,7 +259,7 @@ const MessageList = ({
   userData,
   online,
   setActiveStatus,
-  loading
+  loading,
 }) => {
   const [active, setActive] = useState(0);
   const [user, setUser] = useState([]);
@@ -292,7 +288,7 @@ const MessageList = ({
       className={`w-full flex p-3 px-3 ${
         active === index ? "bg-[#00000010]" : "bg-transparent"
       }  cursor-pointer`}
-      onClick={(e) =>
+      onClick={() =>
         setActive(index) ||
         handleClick(data._id) ||
         setCurrentChat(data) ||
@@ -362,7 +358,7 @@ const SellerInbox = ({
       {/* messages */}
       <div className="px-3 h-[75vh] py-3 overflow-y-scroll">
         {messages &&
-          messages.map((item, index) => (
+          messages.map((item) => (
             <div
               className={`flex w-full my-2 ${
                 item.sender === sellerId ? "justify-end" : "justify-start"
@@ -379,6 +375,7 @@ const SellerInbox = ({
               {item.images && (
                 <img
                   src={`${item.images?.url}`}
+                  alt={`${item.images?.url ?? ""}`}
                   className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                 />
               )}
@@ -403,7 +400,6 @@ const SellerInbox = ({
 
       {/* send message input */}
       <form
-        aria-required={true}
         className="p-3 relative w-full flex justify-between items-center"
         onSubmit={sendMessageHandler}
       >
