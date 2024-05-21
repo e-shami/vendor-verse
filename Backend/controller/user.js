@@ -414,4 +414,31 @@ router.delete(
   })
 );
 
+router.put(
+  "/update-user/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { name, email, role } = req.body;
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return next(
+          new ErrorHandler("User is not available with this id", 400)
+        );
+      }
+      user.name = name;
+      user.email = email;
+      user.role = role;
+      await user.save();
+      res.status(201).json({
+        success: true,
+        message: "User updated successfully!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;

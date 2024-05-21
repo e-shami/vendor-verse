@@ -43,7 +43,7 @@ const HomePage = () => {
             allow="microphone"
             src="https://console.dialogflow.com/api-client/demo/embedded/27c114b5-0491-49b3-ab22-2cb23184268f"
           ></iframe>
-          <buttom
+          <button
             className="bg-[#255e85] rounded-[50%] shadow-md shadow-black h-14 w-14 mr-4 p-3"
             onClick={openChatWindow}
           >
@@ -52,7 +52,7 @@ const HomePage = () => {
               size="large"
               style={{ color: "white" }}
             ></ion-icon>
-          </buttom>
+          </button>
         </div>
       </div>
       <Footer />

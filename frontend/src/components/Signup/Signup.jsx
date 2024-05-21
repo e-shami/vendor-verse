@@ -17,13 +17,21 @@ const Singup = () => {
   const handleFileInputChange = (e) => {
     const reader = new FileReader();
 
-    reader.onload = () => {
+    const file = e.target.files[0];
+    if (file.size > 1024 * 1024) {
+      toast.error("File size too large");
+    }
+
+    if (file.type !== "image/jpeg" && file.type !== "image/png") {
+      toast.error("File format not supported");
+    }
+    reader.onloadend = () => {
       if (reader.readyState === 2) {
         setAvatar(reader.result);
       }
     };
 
-    reader.readAsDataURL(e.target.files[0]);
+    reader.readAsDataURL(file);
     console.log(reader.result);
   };
 
@@ -176,6 +184,16 @@ const Singup = () => {
               <Link to="/login" className="text-blue-600 pl-2">
                 Sign In
               </Link>
+            </div>
+
+            <div className={`${styles.normalFlex} w-full pt-3 pl-[26%]`}>
+              <Link
+                to="/shop-create"
+                className="text-blue-600 pl-2 text-center"
+              >
+                Register shop? &nbsp;
+              </Link>
+              <h4>Become a vendor.</h4>
             </div>
           </form>
         </div>

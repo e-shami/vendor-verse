@@ -24,7 +24,7 @@ const Login = () => {
         },
         { withCredentials: true }
       )
-      .then((res) => {
+      .then(() => {
         toast.success("Login Success!");
         navigate("/");
         window.location.reload(true);
@@ -132,6 +132,13 @@ const Login = () => {
               <Link to="/sign-up" className="text-blue-600 pl-2">
                 Sign Up
               </Link>
+            </div>
+
+            <div className={`${styles.normalFlex} w-full pt-3 pl-[28%]`}>
+              <Link to="/shop-login" className="text-blue-600 pl-2 text-center">
+                Login to Shop. &nbsp;
+              </Link>
+              <h4>Already a vendor.</h4>
             </div>
           </form>
         </div>
