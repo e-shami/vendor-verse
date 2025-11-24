@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
 
-const Singup = () => {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -15,16 +15,20 @@ const Singup = () => {
   const [avatar, setAvatar] = useState(null);
 
   const handleFileInputChange = (e) => {
-    const reader = new FileReader();
-
     const file = e.target.files[0];
+    if (!file) return;
+
     if (file.size > 1024 * 1024) {
-      toast.error("File size too large");
+      toast.error("File size too large (max 1MB)");
+      return;
     }
 
     if (file.type !== "image/jpeg" && file.type !== "image/png") {
-      toast.error("File format not supported");
+      toast.error("Only JPG and PNG files are supported");
+      return;
     }
+
+    const reader = new FileReader();
     reader.onloadend = () => {
       if (reader.readyState === 2) {
         setAvatar(reader.result);
@@ -40,19 +44,36 @@ const Singup = () => {
 
     console.log(name, email, password, avatar);
 
-    axios
-      .post(`${server}/user/create-user`, { name, email, password, avatar })
-      .then((res) => {
-        toast.success(res.data.message);
-        setName("");
-        setEmail("");
-        setPassword("");
-        setAvatar();
+    const url = `${server}/user/create-user`;
+
+      axios(url, {
+          method: 'POST',
+          headers: {
+              'content-type': 'application/json',
+          },
+          data: {
+              name,
+              email,
+              password,
+              avatar
+          }
+      }).then((res) => {
+          toast.success(res.data.message || 'Registration successful!');
+          setName("");
+          setEmail("");
+          setPassword("");
+          setAvatar(null);
+          setIsLoading(false);
       })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
+          .catch((error) => {
+              setIsLoading(false);
+              const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+              toast.error(errorMessage);
+          });
+    setIsLoading(true);
   };
+
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -144,7 +165,7 @@ const Singup = () => {
               ></label>
               <div className="mt-2 flex items-center">
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                  {avatar ? (
+                  {avatar  ? (
                     <img
                       src={avatar}
                       alt="avatar"
@@ -174,9 +195,10 @@ const Singup = () => {
             <div>
               <button
                 type="submit"
-                className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading}
+                className={`group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${isLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'}`}
               >
-                Submit
+                {isLoading ? 'Signing up...' : 'Submit'}
               </button>
             </div>
             <div className={`${styles.normalFlex} w-full`}>
@@ -202,4 +224,4 @@ const Singup = () => {
   );
 };
 
-export default Singup;
+export default Signup;

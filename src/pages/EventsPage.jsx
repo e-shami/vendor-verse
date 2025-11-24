@@ -6,6 +6,7 @@ import Loader from "../components/Layout/Loader";
 
 const EventsPage = () => {
   const { allEvents, isLoading } = useSelector((state) => state.events);
+  console.log("allEvents", allEvents);
   return (
     <>
       {isLoading ? (
@@ -13,7 +14,15 @@ const EventsPage = () => {
       ) : (
         <div>
           <Header activeHeading={4} />
-          <EventCard active={true} data={allEvents && allEvents[0]} />
+          <div>
+            {allEvents.length > 0 ? (
+              allEvents.map((event) => (
+                  <EventCard active={event.id} key={event.id} />
+              ))
+            ) : (
+              <h2>No events found</h2>
+            )}
+          </div>
         </div>
       )}
     </>
