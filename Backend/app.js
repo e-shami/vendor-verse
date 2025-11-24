@@ -5,9 +5,23 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://vendor-verse-phi.vercel.app',
+  'https://vendor-verse.vercel.app'
+];
+
 app.use(
   cors({
-    origin: ["http://localhost:3000" || "https://vendor-verse-phi.vercel.app/"],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
@@ -39,16 +53,25 @@ const conversation = require("./controller/conversation");
 const message = require("./controller/message");
 const withdraw = require("./controller/withdraw");
 
-app.use("/api/v2/user", user);
-app.use("/api/v2/conversation", conversation);
-app.use("/api/v2/message", message);
-app.use("/api/v2/order", order);
-app.use("/api/v2/shop", shop);
-app.use("/api/v2/product", product);
-app.use("/api/v2/event", event);
-app.use("/api/v2/coupon", coupon);
-app.use("/api/v2/payment", payment);
-app.use("/api/v2/withdraw", withdraw);
+// Define route handlers for both prefixed and non-prefixed routes
+const apiRoutes = [
+  { path: '/user', handler: user },
+  { path: '/conversation', handler: conversation },
+  { path: '/message', handler: message },
+  { path: '/order', handler: order },
+  { path: '/shop', handler: shop },
+  { path: '/product', handler: product },
+  { path: '/event', handler: event },
+  { path: '/coupon', handler: coupon },
+  { path: '/payment', handler: payment },
+  { path: '/withdraw', handler: withdraw },
+];
+
+// Register routes with both /api/v2 prefix and without it
+apiRoutes.forEach(route => {
+  app.use(`/api/v2${route.path}`, route.handler);
+  app.use(route.path, route.handler);
+});
 
 // it's for ErrorHandling
 app.use(ErrorHandler);
