@@ -1,3 +1,3 @@
-export const server = "https://vendor-verse-backend.vercel.app";
+export const server = "https://api-node-vendor-verse-backend.onrender.com/";
 
 
