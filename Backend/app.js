@@ -7,7 +7,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000" || "https://vendor-verse-phi.vercel.app/"],
     credentials: true,
   })
 );
