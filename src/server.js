@@ -1,1 +1,4 @@
-export const server = process.env.NODE_ENV !== "PRODUCTION" ? "http://localhost:5000" :  "https://api-node-vendor-verse-backend.onrender.com";
+/*
+// export const server = process.env.NODE_ENV !== "PRODUCTION" ? "http://localhost:5000" :  "https://api-node-vendor-verse-backend.onrender.com";
+ */
+export const server = "https://api-node-vendor-verse-backend.onrender.com";
