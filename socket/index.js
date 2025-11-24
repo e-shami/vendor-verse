@@ -4,13 +4,32 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: [
+      'http://localhost:3000',
+      'https://vendor-verse-phi.vercel.app',
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  allowEIO3: true
+});
 
 require("dotenv").config({
   path: "./.env",
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://vendor-verse-phi.vercel.app',
+  ],
+  credentials: true
+}));
+
+// Handle preflight requests
+app.options('*', cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -41,7 +60,27 @@ const createMessage = ({ senderId, receiverId, text, images }) => ({
   seen: false,
 });
 
+// Error handling middleware
+io.use((socket, next) => {
+  // You can add authentication here if needed
+  next();
+});
+
 io.on("connection", (socket) => {
+  // Log connection errors
+  socket.on("error", (error) => {
+    console.error('Socket error:', error);
+  });
+
+  // Handle connection timeout
+  socket.on('disconnect', (reason) => {
+    console.log(`Client disconnected: ${reason}`);
+  });
+
+  // Handle connection errors
+  socket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+  });
   // when connect
   console.log(`a user is connected`);
 
@@ -108,6 +147,23 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(process.env.PORT || 4000, () => {
-  console.log(`server is running on port ${process.env.PORT || 4000}`);
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Socket.IO server is running on ws://localhost:${PORT}`);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  // Close server & exit process
+  server.close(() => process.exit(1));
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Close server & exit process
+  server.close(() => process.exit(1));
 });
